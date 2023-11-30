@@ -1,12 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div>
         <h2 className="text-lg pb-5 flex-col items-center font-mono text-purple-100 text-xl">
-          Hi! I'm Susie 👋🏼
+          Hi! I'm Susie
         </h2>
+        <p className="text-lg pb-5 animate-bounce">👋🏼</p>
         <p className="pb-2 text-indigo-100 font-mono tracking-wide text-lg">
           Welcome to my blog!
         </p>
