@@ -6,7 +6,9 @@ export default function Page() {
 
   return (
     <div>
-      <h2>My posts: </h2>
+      <h2 className="flex-col items-center p-8 text-2x1 font-bold font-mono tracking-wide text-indigo-100">
+        My posts:{" "}
+      </h2>
       <ul>
         {posts.map((post) => {
           return (
