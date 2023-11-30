@@ -1,26 +1,42 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+// "use client";
+// import { useRouter } from "next/navigation";
+// import { useTransition } from "react";
 import { WEB_SITE } from "config";
+import FormStatusButton from "./FormStatusButton";
 
-/// ... imports here
+import { saveComment } from "@/lib/comments";
+
+// gives us a way to reload page after clear cache
+import { revalidatePath } from "next/cache";
 
 export function CommentForm({ postSlug }: { postSlug: string }) {
   // the router hook to trigger a page refresh
-  const router = useRouter();
+  // const router = useRouter();
 
-  // the react useTransition hook to manage client/server data upodates
-  // without refreshing the page. isPending gives us the ability to know
-  // show a spinner or similar
-  const [isPending, startTransition] = useTransition();
+  // NOTES
+  // the react useTransition hook to manage client/server data updates
+  // ..without refreshing the page. isPending gives us the ability to
+  // ..show a spinner or similar
 
+  // CODE
+  // const [isPending, startTransition] = useTransition();
+
+  // NOTES
   // runs when onSubmit event fires, uses fetch to send a POST request to
   // our API comment route, and then refreshes the page data to show the comment
-  async function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleFormSubmit(formData: FormData) {
+    "use server";
     console.log("submiting the form");
 
-    // prevent the form submitting and redircting us to the action location
-    event.preventDefault();
+    const username = formData.get("username") as string;
+    const comment = formData.get("comment") as string;
+    await saveComment(username, comment, postSlug);
+    revalidatePath(`/blog/${postSlug}`);
+  }
+  // prevent the form submitting and redircting us to the action location
+
+  // CODE
+  /* event.preventDefault();
 
     // get the form input values
     // @ts-ignore
@@ -44,19 +60,16 @@ export function CommentForm({ postSlug }: { postSlug: string }) {
     startTransition(() => {
       router.refresh();
       console.log("reloaded the page data");
-    });
-  }
+    }); */
 
   // the handleFormSubmit fuction is passed to the onSubmit event handler on the form
   return (
-    <form onSubmit={handleFormSubmit}>
+    <form action={handleFormSubmit}>
       <label htmlFor="username">Name</label>
       <input type="text" name="username" />
       <label htmlFor="comment">Comment</label>
       <textarea name="comment" cols={30} rows={10} />
-      <button type="submit" disabled={isPending}>
-        {isPending ? "sending comment..." : "send comment"}
-      </button>
+      <FormStatusButton />
     </form>
   );
 }
